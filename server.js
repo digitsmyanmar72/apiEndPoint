@@ -1,46 +1,65 @@
 const express = require('express');
+const mysql = require('mysql2');
 const app = express();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// In-memory data store
-let people = [
-    { id: 1, name: "nay", age: 42 }
-];
+// Create a MySQL connection pool
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root', // Replace with your MySQL username
+    password: '', // Replace with your MySQL password
+    database: 'mydatabase',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
 // GET /api/people - Retrieve all people
-app.get('/api/people', function(req, res) {
-    return res.status(200).json(people);
+app.get('/api/people', (req, res) => {
+    pool.query('SELECT * FROM people', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        return res.status(200).json(results);
+    });
 });
 
 // POST /api/people - Create a new person
-app.post('/api/people', function(req, res) {
-    const newPerson = req.body;
-    if (!newPerson.name || !newPerson.age) {
-        return res.status(400).json({ error: "Name and age are required" });
+app.post('/api/people', (req, res) => {
+    const { name, age } = req.body;
+    if (!name || !age) {
+        return res.status(400).json({ error: 'Name and age are required' });
     }
 
-    // Generate a new ID (for simplicity, just increment the last ID)
-    newPerson.id = people.length > 0 ? people[people.length - 1].id + 1 : 1;
-    people.push(newPerson);
-
-    return res.status(201).json(newPerson);
+    pool.query('INSERT INTO people (name, age) VALUES (?, ?)', [name, age], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        return res.status(201).json({ id: results.insertId, name, age });
+    });
 });
 
 // DELETE /api/people/:id - Delete a person by ID
-app.delete('/api/people/:id', function(req, res) {
-    const id = parseInt(req.params.id);
-    const index = people.findIndex(person => person.id === id);
+app.delete('/api/people/:id', (req, res) => {
+    const id = req.params.id;
 
-    if (index === -1) {
-        return res.status(404).json({ error: "Person not found" });
-    }
-
-    people.splice(index, 1);
-    return res.status(204).send(); // 204 No Content
+    pool.query('DELETE FROM people WHERE id = ?', [id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Person not found' });
+        }
+        return res.status(204).send(); // 204 No Content
+    });
 });
 
-app.listen(8080, function() {
+// Start the server
+app.listen(8080, () => {
     console.log('Server is running on http://localhost:8080');
 });
