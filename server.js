@@ -27,6 +27,22 @@ app.get('/api/people', (req, res) => {
     });
 });
 
+// GET /api/people/:id - Retrieve a specific person by ID
+app.get('/api/people/:id', (req, res) => {
+    const id = req.params.id;
+
+    pool.query('SELECT * FROM people WHERE id = ?', [id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Person not found' });
+        }
+        return res.status(200).json(results[0]);
+    });
+});
+
 // POST /api/people - Create a new person
 app.post('/api/people', (req, res) => {
     const { name, age } = req.body;
