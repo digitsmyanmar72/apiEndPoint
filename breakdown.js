@@ -1,24 +1,19 @@
-This code is a basic Node.js application using the Express framework to create a RESTful API. 
+/*This code is a basic Node.js application using the Express framework to create a RESTful API. 
 It integrates with a MySQL database for data storage and uses JSON Web Tokens (JWT) for authentication.
- Below is a breakdown of the code:
+ Below is a breakdown of the code:*/
 
-1. Dependencies and Setup
+//1. Dependencies and Setup
+const express = require('express');  // express: Framework for building the API.
+const mysql = require('mysql2');     // mysql2: MySQL client for Node.js to interact with the MySQL database
+const jwt = require('jsonwebtoken'); // jsonwebtoken: Library for generating and verifying JWT tokens.
+const bcrypt = require('bcryptjs');  // bcryptjs: Library for hashing passwords.
+const app = express();               // app: Initializes the Express application.
 
-const express = require('express'); express: Framework for building the API.
-const mysql = require('mysql2'); mysql2: MySQL client for Node.js to interact with the MySQL database
-const jwt = require('jsonwebtoken'); jsonwebtoken: Library for generating and verifying JWT tokens.
-const bcrypt = require('bcryptjs'); bcryptjs: Library for hashing passwords.
-const app = express(); app: Initializes the Express application.
 
-
-2. Middleware
-
-app.use(express.json());
-This middleware parses incoming JSON payloads in the request body.
+//2. Middleware
+app.use(express.json());    // This middleware parses incoming JSON payloads in the request body.
 
 3. MySQL Connection Pool
-javascript
-Copy
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root', // Replace with your MySQL username
@@ -29,18 +24,13 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 Creates a connection pool to manage database connections efficiently.
-
 Replace user, password, and database with your MySQL credentials and database name.
 
 4. JWT Secret Key
-javascript
-Copy
 const JWT_SECRET = 'your_jwt_secret_key'; // Replace with a strong secret key
 A secret key used to sign and verify JWT tokens. Replace this with a strong, unique key in production.
 
 5. Authentication Middleware
-javascript
-Copy
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -171,8 +161,6 @@ app.post('/api/people', authenticateToken, (req, res) => {
 Adds a new person to the people table. Requires a valid JWT token.
 
 DELETE /api/people/:id - Delete a Person (Protected)
-javascript
-Copy
 app.delete('/api/people/:id', authenticateToken, (req, res) => {
     const id = req.params.id;
 
