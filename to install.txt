@@ -3,6 +3,26 @@ npm init -y
 npm i express
 npm install express mysql2
 
+1. Register a User
+ POST http://localhost:8080/api/register
+{
+  "username": "john",
+  "password": "password123"
+}
+
+2. Login and Get Token
+POST http://localhost:8080/api/login
+{
+  "username": "john",
+  "password": "password123"
+}
+
+3. Access Protected Route (e.g., Get All People)
+GET http://localhost:8080/api/people
+Authorization: Bearer <your_token>
+
+
+
 
 
 API Endpoint
