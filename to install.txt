@@ -1,0 +1,4 @@
+npm install jsonwebtoken bcryptjs
+npm init -y
+npm i express
+npm install express mysql2
