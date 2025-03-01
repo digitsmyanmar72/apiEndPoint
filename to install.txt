@@ -49,3 +49,17 @@ Content-Type: application/json
 URL: http://localhost:8080/api/people
 Headers:
 Authorization: Bearer <your_token> (replace <your_token> with the token from the login response).
+
+
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE people (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INT NOT NULL
+);
