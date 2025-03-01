@@ -2,3 +2,30 @@ npm install jsonwebtoken bcryptjs
 npm init -y
 npm i express
 npm install express mysql2
+
+
+
+API Endpoint
+1) Method: POST
+URL: http://localhost:8080/api/register
+Headers:
+Content-Type: application/json
+{
+  "username": "john",
+  "password": "password123"
+}
+
+
+2) Method: POST
+URL: http://localhost:8080/api/login
+Headers:
+Content-Type: application/json
+{
+  "username": "john",
+  "password": "password123"
+}
+
+3)Method: GET
+URL: http://localhost:8080/api/people
+Headers:
+Authorization: Bearer <your_token> (replace <your_token> with the token from the login response).
