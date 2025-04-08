@@ -23,9 +23,10 @@ const JWT_SECRET = 'your_jwt_secret_key'; // Replace with a strong secret key
 
 // Middleware to authenticate JWT token
 function authenticateToken(req, res, next) {
+    //Token Extraction
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
+    //Token Check
     if (!token) {
         return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
