@@ -8,56 +8,60 @@ const app = require('express');
 //middleware to parse json data from http request
 app.use(express.json());
 
-//create mysql connection pool
+//create mysqlconnection poo'
 const pool = mysql.createPool({
-    host : 'localhost',
-    user:'root',
-    password:'',
-    database:'mydatabase',
-    waitForConnections:true,
-    connectionLimit:10,
-    queueLimit:0,
+  host: 'localhost',
+  password: '',
+  user: 'root',
+  database: 'mydatabase',
+
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+
 });
 
-//Secret Key for JWT
-const JWT_SECRET='';
+// create jwtweb token
+const JWT_SECRET = '';
 
-
-
-//middleware to authenticate JWT token from http request
-function authenticateToken(req,res,next){
-  //token extraction
-  const authHeader = req.authHeader['authorization'];
+//middleware to authenticate jwt web token
+function authenticateToken(req, res, next) {
+  //extract token
+  const authHeader = req.authHeaders['authorization'];
   const token = authHeader && authHeader.split('')[1];
 
   //check token
-  if(!token){
-    return res.status(401).json({error:'access denied.no token provided'
+  if (!token) {
+    return res.status(401).json({ error: 'access denied.no token provided' });
+
+    //verify jwt secret
+    JWT.verify(token, JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.status({ error: 'invalid token' })
+      };
+      req.user = user;
+      next();
     })
-  };
+  }
+};
 
-  //verify jwt token
-   jwt.verify (token,JWT_SECRET,(err,user)=>{
-       if(error){
-        return res.status(301).json({error:'invalid token'});
-       };
-
-    //attach user datat to the request
-    req.user = user ;
-
-    //proceed to the next middleware
-    next();
-
-    });
-       
-    
-
-  
-  
-
+//api/post/register
+app.post('api/post/register',async(req,res)=>{
+//destructure the username and password from the request body
+const {username , password} = req.body;
+//vadation check
+if(!username || ! password){
+  return res.status(401).json({err:'username and password are required'})
 }
 
+});
 
 
 
-    
+
+
+
+
+
+
+
