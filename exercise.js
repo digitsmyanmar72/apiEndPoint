@@ -52,7 +52,10 @@ const {username , password} = req.body;
 //vadation check
 if(!username || ! password){
   return res.status(401).json({err:'username and password are required'})
-}
+};
+
+//hashedPassword
+const hashedPassword = await bcrypt.hash (password,10);
 
 });
 
