@@ -5,66 +5,64 @@ const JWT = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const app = require('express');
 
-//middleware to parse json data from http request
-app.use(express.json());
+//middleware to parse incoming json data from http request
+app.use (express.json());
 
-//create mysqlconnection poo'
+//create mysqlconnection pool
 const pool = mysql.createPool({
-  host: 'localhost',
-  password: '',
-  user: 'root',
-  database: 'mydatabase',
-
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-
+  host :'localhost',
+  password :'',
+  user : 'root',
+  database :'mydatabase',
+  waitForConnections : true ,
+  connectionLimit : 10 ,
+  queueLimit : 0 
 });
 
-// create jwtweb token
+//create jwt web token
 const JWT_SECRET = '';
 
 //middleware to authenticate jwt web token
-function authenticateToken(req, res, next) {
+function authenticateToken (req,res,next){
   //extract token
   const authHeader = req.authHeaders['authorization'];
-  const token = authHeader && authHeader.split('')[1];
+  const token = authHeader && authHeader.split(''[1]);
 
   //check token
-  if (!token) {
-    return res.status(401).json({ error: 'access denied.no token provided' });
-
-    //verify jwt secret
-    JWT.verify(token, JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status({ error: 'invalid token' })
-      };
-      req.user = user;
-      next();
-    })
+  if(!token){
+    return res.status(401).json({error:'access denied.no token provided'});
   }
-};
 
-//api/post/register
-app.post('api/post/register',async(req,res)=>{
-//destructure the username and password from the request body
-const {username , password} = req.body;
-//vadation check
-if(!username || ! password){
-  return res.status(401).json({err:'username and password are required'})
-};
+  // jwt verify by ES 6
+  JWT.verify(token,JWT_SECRET,(err,user)=>{
+    if(!err){
+      return res.status(402).json({ error:'invalid token'})
+    };
+    req.user = user ;
+    next();
+  });
 
-//hashedPassword
-const hashedPassword = await bcrypt.hash (password,10);
+  //api/post/register
+  app.post('/api/register',async(req,res)=>{
+    //destructure the username and password form http request body
+    const {username , password} = req.body ;
+    //validation check
+    if(!username || ! password) {
+      return res.status(403).json({error:'the username and password are required'})
+    };
 
-});
+    //hash the password
+    const hashedPassword = await hash.bcrypt(password,10);
+
+    //the databaseconnection pool to insert a new user into user table 
+    pool.query('INSSERT INTO users (username , password) VALUES (?,?)',[username,hashedPasswor],(err,results) =>{
+      if(err){
+        console.err(error);
+        return res.status(500).json({err:'database error'})
+      };
+      return res.status(201).json({message:'user register sucessfully'});
+    })
+  })
 
 
-
-
-
-
-
-
-
-
+}
