@@ -65,12 +65,16 @@ app.post('/api/login', (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required' });
     }
-
+    //database query
     pool.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
+        
+        //error handling
         if (err) {
             console.error(err);
             return res.status(500).json({ error: 'Database error' });
         }
+
+        //user existence check
         if (results.length === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
