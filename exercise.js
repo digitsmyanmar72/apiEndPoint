@@ -55,14 +55,35 @@ function authenticateToken (req,res,next){
     const hashedPassword = await hash.bcrypt(password,10);
 
     //the databaseconnection pool to insert a new user into user table 
-    pool.query('INSSERT INTO users (username , password) VALUES (?,?)',[username,hashedPasswor],(err,results) =>{
+    pool.query('INSSERT INTO users (username , password) VALUES (?,?)',[username,hashedPassword],(err,results) =>{
       if(err){
         console.err(error);
         return res.status(500).json({err:'database error'})
       };
       return res.status(201).json({message:'user register sucessfully'});
     })
+  });
+
+  //api/post/login - login and get token
+  app.psot('/api/login',(req,res)=>{
+    const {username,password}= req.body;
+    if(!username||!password){
+      return res.status(401).json({error:'the username and password are required'})
+    }
+  });
+  //database query
+  pool.query('SELECT FROM * users WHERE username =?',[username],async(err,results)=>{
+    //error handling
+    if(err){
+      console.error(err);
+      return res.status(500).json({errro:'database error'})
+    };
+    //user existence check
+    if(results,length === 0 ){
+      return res.status(400).json({error:'user not found'})
+    };
   })
+
 
 
 }
