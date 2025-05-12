@@ -78,10 +78,11 @@ app.post('/api/login', (req, res) => {
         if (results.length === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        //password verification
         const user = results[0];
         const validPassword = await bcrypt.compare(password, user.password);
-
+        
+        //password validation
         if (!validPassword) {
             return res.status(401).json({ error: 'Invalid password' });
         }

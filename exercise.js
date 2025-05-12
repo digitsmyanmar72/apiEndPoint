@@ -85,13 +85,13 @@ app.post('/api/login',(req,res)=>{
       return res.status(400).json({error:'user not found'})
     };
 
-    //passoord verification
+    //password verification
     const user = results[0];
     const validPassword = await bcrypt.compare(password,user.password);
-     if(!validPassword){
+    //validation password
+    if(!validPassword){
       return res.status(401).json({error:'invalid password'})
-     }
-
+    }
     
   });
 })
